@@ -1,14 +1,15 @@
 import express from 'express';
+import { createUser, authenticate } from '../../controller/user.controller';
 import {
-  getAllUsers,
-  getByUsername,
-  createUser,
-} from '../../controller/user.controller';
+  signupValidator,
+  loginValidator,
+} from '../../validator/user.validator';
+
+const prefix = '/user';
 
 const router = express.Router();
 
-router.get('/list', getAllUsers);
-router.get('/one', getByUsername);
-router.get('/create', createUser);
+router.post(prefix + '/signup', signupValidator, createUser);
+router.post(prefix + '/authenticate', loginValidator, authenticate);
 
 export default router;

@@ -1,42 +1,60 @@
-import db from '../db/db.config';
-import repo from '../repository/user.repository';
+import userRepository from '../repository/user.repository';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import dotEnv from 'dotenv';
 
-export const getAllUsers = (req, res) => {
-  repo
-    .findAll()
-    .then((data) => {
-      console.log(data);
-      return res.json(data); // print data;
-    })
-    .catch((error) => {
-      console.log('ERROR:', error); // print the error;
-    });
-};
+dotEnv.config();
 
-export const getByUsername = (req, res) => {
-  repo
-    .findByUsername('jing')
-    .then((data) => {
-      return res.json(data); // print data;
-    })
-    .catch((error) => {
-      console.log('ERROR:', error); // print the error;
-    });
+export const authenticate = async (req, res) => {
+  try {
+    const user = await userRepository.findByUsername(req.body.username);
+    if (user) {
+      const result = await bcrypt.compare(req.body.password, user.password);
+      if (result) {
+        if (user.api_key) {
+          return res.status(401).json({ error: 'Api key not null' });
+        } else {
+          console.log(process.env.JWT_SECRET);
+
+          const token = jwt.sign(username, process.env.JWT_SECRET, {
+            expiresIn: process.env.JWT_EXPIRE_IN_DAYS,
+            algorithm: 'HS512',
+          });
+          console.log('asdasdasd');
+          return res.json({ token: token });
+        }
+      } else {
+        return res
+          .status(401)
+          .json({ error: 'Username and password did not match' });
+      }
+    } else {
+      return res.status(401).json({ error: 'Bad credentials' });
+    }
+  } catch (error) {
+    return res.json(error.detail);
+  }
 };
 
 export const createUser = (req, res) => {
-  repo
-    .createUser({
-      username: 'papanoe',
-      password: '1234',
-      created: new Date(),
-      updated: new Date(),
-    })
+  const salt = bcrypt.genSaltSync(10);
+  const hash = bcrypt.hashSync(req.body.password, salt);
+  const user = {
+    firstname: req.body.firstname,
+    lastname: req.body.lastname,
+    email: req.body.email,
+    username: req.body.username,
+    password: hash,
+    created: new Date(),
+    updated: new Date(),
+  };
+
+  userRepository
+    .createUser(user)
     .then((data) => {
-      return res.json(data); // print data;
+      return res.json(data[0]);
     })
     .catch((error) => {
-      console.log('ERROR: aca', error.message);
-      return res.json(error);
+      return res.status(400).json({ error: error.detail });
     });
 };

@@ -1,10 +1,5 @@
 import { db, pgp } from '../db/db.config';
 
-exports.findAll = () => {
-  const query = 'SELECT * FROM USERS';
-  return db.any(query);
-};
-
 exports.findByUsername = (username) => {
   const query = pgp.as.format(
     'SELECT * FROM users WHERE username = ${username}',
@@ -15,9 +10,13 @@ exports.findByUsername = (username) => {
 
 exports.createUser = (user) => {
   const query = pgp.as.format(
-    'INSERT INTO users(username, password, created, updated)' +
-      'VALUES(${username}, ${password}, ${created}, ${updated})',
+    'INSERT INTO users(firstname, lastname, email, username, password, created, updated)' +
+      'VALUES(${firstname}, ${lastname}, ${email}, ${username}, ${password}, ${created}, ${updated})' +
+      'RETURNING firstname, lastname, email, username, created, updated',
     {
+      firstname: user.firstname,
+      lastname: user.lastname,
+      email: user.email,
       username: user.username,
       password: user.password,
       created: user.created,
