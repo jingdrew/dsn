@@ -1,16 +1,21 @@
 import express from 'express';
 import { graphqlHTTP } from 'express-graphql';
 import dotEnv from 'dotenv';
-import { schema, root } from './api/schema';
-import { defaultSchema } from './graphql/index';
+import { makeExecutableSchema } from '@graphql-tools/schema';
+import typeDefs from './typedef';
+import resolvers from './resolver';
 
 dotEnv.config();
+
 const app = express();
+const prefix = process.env.GRAPHQL_PATH ?? '/graphql';
+const port = process.env.SERVER_PORT ?? 4000;
+const schema = makeExecutableSchema({ typeDefs: typeDefs, resolvers: resolvers });
 
 app.use(express.json());
 
-app.use(process.env.GRAPHQL_PATH!, graphqlHTTP((request, response, graphQLParams) => ( {
-    schema: defaultSchema,
+app.use(prefix, graphqlHTTP((request, response) => ( {
+    schema: schema,
     graphiql: true,
     context: {
         req: request,
@@ -18,10 +23,7 @@ app.use(process.env.GRAPHQL_PATH!, graphqlHTTP((request, response, graphQLParams
     }
 } )));
 
-app.get('/', (req, res) => {
-    return res.json('asdasdas');
-});
+app.listen(port, () => {
+    console.log(`🚀 Server up and running at http://localhost:${port}${prefix}`);
 
-console.log('here');
-app.listen(process.env.SERVER_PORT);
-console.log('Up and running');
+});

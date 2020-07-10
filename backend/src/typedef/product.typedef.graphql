@@ -1,0 +1,12 @@
+type Product {
+    name: String
+    description: String
+}
+
+type Query {
+    product: Product
+}
+
+type Mutation {
+    saveProduct(name: String!): Product
+}
