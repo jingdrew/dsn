@@ -1,5 +1,18 @@
 type User {
-    username: String
+    username: String,
+    firstName: String,
+    lastName: String,
+    email: String,
+    createdAt: String,
+    updatedAt: String
+}
+
+type Token {
+    token: String
+}
+
+input AuthInput {
+    username: String,
     password: String
 }
 
@@ -17,4 +30,5 @@ type Query {
 
 type Mutation {
     signUp(input: UserInput!): User
+    authenticate(input: AuthInput): Token
 }

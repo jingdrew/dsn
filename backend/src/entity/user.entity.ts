@@ -30,8 +30,8 @@ class UserEntity {
     updatedAt: Date;
 
 
-    constructor(username: string, password: string, email: string, firstName: string,
-                lastName: string) {
+    constructor(username: string, password: string, firstName: string,
+                lastName: string, email: string) {
         this.id = 0
         this.username = username;
         this.password = password;

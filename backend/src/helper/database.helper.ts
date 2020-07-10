@@ -7,22 +7,12 @@ class DatabaseHelper<T> {
         this.repository = getManager().getRepository(entityClass);
     }
 
-    async save(entity:T) {
-        try {
-            return await this.repository.save(entity);
-        } catch (e) {
-            console.log(e);
-            return undefined;
-        }
+    async save(entity: T) {
+        return await this.repository.save(entity);
     }
 
     async get(filter: object) {
-        try {
-            return await this.repository.findOne(filter);
-        } catch (e) {
-            console.log(e);
-            return undefined;
-        }
+        return await this.repository.findOne(filter);
     }
 }
 

@@ -1,23 +1,21 @@
-class ResultModel<T> {
+class Result<T> {
     data: T | Error;
-    status: number;
 
-    constructor(data: T | Error, status: number) {
+    constructor(data: T | Error) {
         this.data = data;
-        this.status = status;
     }
 
-    public isError() {
+    public hasError() {
         return this.data instanceof Error;
     }
 
     public getError() {
-        return this.isError() ? this.data as Error : undefined;
+        return this.hasError() ? this.data as Error : undefined;
     }
 
     public getData() {
-        return this.isError() ? undefined : this.data as Error;
+        return this.hasError() ? undefined : this.data as Error;
     }
 }
 
-export default ResultModel;
+export default Result;
