@@ -1,9 +1,8 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, Entity } from 'typeorm';
+import { ParentEntity } from './parent.entity';
 
-@Entity('users')
-class UserEntity {
-    @PrimaryGeneratedColumn()
-    id: number;
+@Entity("users")
+export class UserEntity extends ParentEntity {
 
     @Column({ unique: true, nullable: false })
     username: string;
@@ -23,24 +22,18 @@ class UserEntity {
     @Column({ name: 'token' })
     token: string;
 
-    @CreateDateColumn({ name: 'created_at' })
-    createdAt: Date;
 
-    @UpdateDateColumn({ name: 'updated_at' })
-    updatedAt: Date;
-
-
-    constructor(username: string, password: string, firstName: string,
-                lastName: string, email: string) {
-        this.id = 0
+    constructor(
+        username: string, password: string, firstName: string,
+        lastName: string, email: string
+    ) {
+        super();
         this.username = username;
         this.password = password;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.token = "";
-        this.createdAt = new Date();
-        this.updatedAt = new Date();
+        this.token = '';
     }
 }
 

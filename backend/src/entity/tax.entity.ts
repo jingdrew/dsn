@@ -1,17 +1,21 @@
 import { ParentEntity } from './parent.entity';
 import { Column, Entity } from 'typeorm';
 
-@Entity("products")
-export class ProductEntity extends ParentEntity{
+@Entity("taxes")
+export class TaxEntity extends ParentEntity {
 
-    @Column()
+    @Column({ nullable: false })
     name: string;
 
     @Column()
     description: string;
 
-    constructor(name: string, description: string) {
+    @Column({ nullable: false })
+    tax: number;
+
+    constructor(name: string, description: string, tax: number) {
         super();
+        this.tax = tax;
         this.name = name;
         this.description = description;
     }
