@@ -1,37 +1,37 @@
-import { validateAuthInput, validateSignUpInput } from '../validator/user.validator';
 import UserService from '../service/user.service';
-import UserEntity from '../entity/user.entity';
+import { Arg, Mutation, Query } from 'type-graphql';
+import { AuthInput, Token, User, UserInput } from '../typedef/user.typedef';
+import { validateOrReject } from 'class-validator';
+import { ApolloError } from 'apollo-server-express';
 
-export default {
-    Query: {
-        user: () => ( { username: 'Jing', password: 'Du' } )
-    },
+class UserResolver {
 
-    Mutation: {
-        signUp: async (source: any, args: any) => {
-            validateSignUpInput(args.input);
-            const user = new UserEntity(
-                args.input.username,
-                args.input.password,
-                args.input.firstName,
-                args.input.lastName,
-                args.input.email
-            );
-            const result = await UserService.register(user);
-            if (result.getError()) {
-                throw new Error(result.getError()!.message ?? 'Unexpected error occurred, sign up failed.');
-            } else {
-                return result.getData();
-            }
-        },
-        authenticate: async (source: any, args: any) => {
-            validateAuthInput(args.input);
-            const result = await UserService.authenticate(args.input.username, args.input.password);
-            if (result.getError()) {
-                throw new Error(result.getError()!.message ?? 'Unexpected error occurred, failed to authenticate.');
-            } else {
-                return result.getData();
-            }
+    @Query(() => User)
+    async user() {
+        return ( { username: 'Jing', password: 'Du' } );
+    };
+
+    @Mutation(() => User)
+    async signUp(@Arg('input') input: UserInput) {
+        await validateOrReject(input);
+        const result = await UserService.register(input);
+        if (result.getError()) {
+            throw new ApolloError(result.getError()!.message, result.code);
+        } else {
+            return result.getData();
         }
-    }
-};
+    };
+
+    @Mutation(() => Token)
+    async authenticate(@Arg('input') input: AuthInput) {
+        await validateOrReject(input);
+        const result = await UserService.authenticate(input.username!, input.password!);
+        if (result.getError()) {
+            throw new ApolloError(result.getError()!.message, result.code);
+        } else {
+            return { token: result.getData() };
+        }
+    };
+}
+
+export default UserResolver;

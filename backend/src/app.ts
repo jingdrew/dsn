@@ -1,31 +1,29 @@
+import 'dotenv/config';
+import 'reflect-metadata';
 import express from 'express';
-import { graphqlHTTP } from 'express-graphql';
-import dotEnv from 'dotenv';
-import { makeExecutableSchema } from '@graphql-tools/schema';
-import typeDefs from './typedef';
-import resolvers from './resolver';
 import { createConnection } from 'typeorm';
+import { ApolloServer } from 'apollo-server-express';
+import { buildSchema } from 'type-graphql';
+import UserResolver from './resolver/user.resolver';
+import ProductResolver from './resolver/product.resolver';
 
-dotEnv.config();
-createConnection().then(async connection => {
+
+createConnection().then(async () => {
+
     const app = express();
-    const prefix = process.env.GRAPHQL_PATH ?? '/graphql';
-    const port = process.env.SERVER_PORT ?? 4000;
-    const schema = makeExecutableSchema({ typeDefs: typeDefs, resolvers: resolvers });
+    const serverPort = process.env.SERVER_PORT ?? 4000;
+    const apiPath = process.env.GRAPHQL_PATH ?? "/graphql";
 
-    app.use(express.json());
+    const apolloServer = new ApolloServer({
+        schema: await buildSchema({ resolvers: [UserResolver, ProductResolver] }),
+        context: ({ req, res }) => ( { req, res } )
+    });
 
-    app.use(prefix, graphqlHTTP((request, response) => ( {
-        schema: schema,
-        graphiql: true,
-        context: {
-            req: request,
-            res: response
-        }
-    } )));
+    apolloServer.applyMiddleware({ app: app, path: apiPath, cors: false });
 
-    app.listen(port, () => {
-        console.log(`🚀 Server up and running at http://localhost:${port}${prefix}`);
-
+    app.listen(serverPort, () => {
+        console.log(`🚀 Server up and running at http://localhost:${serverPort}${apiPath}`);
     });
 }).catch((err) => console.log('Error connecting to database : ' + err.message));
+
+

@@ -1,8 +1,10 @@
 class Result<T> {
     data: T | Error;
+    code: string
 
-    constructor(data: T | Error) {
+    constructor(data: T | Error, code: string) {
         this.data = data;
+        this.code = code;
     }
 
     public hasError() {
