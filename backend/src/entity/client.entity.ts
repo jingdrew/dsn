@@ -1,8 +1,8 @@
 import { Column, Entity, Index } from 'typeorm';
-import { ParentEntity } from './parent.entity';
+import { Parent } from './parent.entity';
 
 @Entity("clients")
-export class ClientEntity extends ParentEntity {
+export class Client extends Parent {
 
     @Column({ nullable: false })
     fullName: string;
@@ -24,6 +24,4 @@ export class ClientEntity extends ParentEntity {
         this.email = email;
         this.phoneNumber = phoneNumber;
     }
-
-
 }

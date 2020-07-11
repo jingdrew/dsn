@@ -1,35 +1,33 @@
 import { Arg, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
 import { Product } from '../entity/product.entity';
 import { IsAuthorized } from '../middleware/authorize.middleware';
-import { ProductFilter, ProductInput } from '../typedef/product.typedef';
-import { validateOrReject } from 'class-validator';
 import { ApolloError } from 'apollo-server-express';
+import { ProductInput } from '../typedef/product.typedef';
+import { validateOrReject } from 'class-validator';
+import { Tax } from '../entity/tax.entity';
+import { TaxInput } from '../typedef/tax.typedef';
 
 @Resolver()
-class ProductResolver {
+class TaxResolver {
 
-    @Query(() => [Product])
+    @Query(() => [Tax])
     @UseMiddleware(IsAuthorized)
-    async products(@Arg('filter', { nullable: true }) filter?: ProductFilter) {
+    async taxes() {
         try {
-            if (filter) {
-                return await Product.find({where: filter});
-            } else {
-                return await Product.find()
-            }
+            return await Product.find();
         } catch (e) {
             return new ApolloError(e.details ?? 'Unexpected error occurred.', e.code ?? '500');
         }
     }
 
-    @Mutation(() => Product)
+    @Mutation(() => Tax)
     @UseMiddleware(IsAuthorized)
-    async saveProduct(@Arg('input') input: ProductInput) {
+    async saveTax(@Arg('input') input: TaxInput) {
         try {
             await validateOrReject(input);
-            const product = new Product(input.name, input.description);
-            if (await product.save()) {
-                return product;
+            const tax = new Tax(input.name, input.description ?? "", input.value);
+            if (await tax.save()) {
+                return tax;
             }
             return new ApolloError('Unexpected error occurred.', '500');
         } catch (e) {
@@ -37,5 +35,3 @@ class ProductResolver {
         }
     }
 }
-
-export default ProductResolver;

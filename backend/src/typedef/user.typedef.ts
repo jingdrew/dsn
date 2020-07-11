@@ -1,32 +1,11 @@
-import { Field, ObjectType, InputType } from 'type-graphql';
-import { IsEmail, MinLength } from 'class-validator';
-
-@ObjectType()
-export class User {
-    @Field()
-    username?: string;
-
-    @Field()
-    firstName?: string;
-
-    @Field()
-    lastName?: string;
-
-    @Field()
-    @IsEmail()
-    email?: string;
-
-    @Field()
-    createdAt?: string;
-
-    @Field()
-    updatedAt?: string;
-}
+import { Field, InputType, ObjectType } from 'type-graphql';
+import { MinLength } from 'class-validator';
 
 @ObjectType()
 export class Token {
+
     @Field()
-    token?: string;
+    token!: string
 }
 
 @InputType()
@@ -34,11 +13,11 @@ export class AuthInput {
 
     @Field()
     @MinLength(4)
-    username?: string;
+    username!: string;
 
     @Field()
     @MinLength(6)
-    password?: string;
+    password!: string;
 }
 
 
@@ -47,18 +26,18 @@ export class UserInput {
 
     @Field()
     @MinLength(4)
-    username?: string;
+    username!: string;
 
     @Field()
     @MinLength(6)
-    password?: string;
+    password!: string;
 
     @Field()
-    firstName?: string;
+    firstName!: string;
 
     @Field()
-    lastName?: string;
+    lastName!: string;
 
     @Field()
-    email?: string;
+    email!: string;
 }

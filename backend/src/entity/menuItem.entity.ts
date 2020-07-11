@@ -1,11 +1,11 @@
-import { ParentEntity } from './parent.entity';
+import { Parent } from './parent.entity';
 import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
-import { ProductEntity } from './product.entity';
-import { TaxEntity } from './tax.entity';
-import { OrderEntity } from './order.entity';
+import { Product } from './product.entity';
+import { Tax } from './tax.entity';
+import { Order } from './order.entity';
 
 @Entity("items")
-export class MenuItemEntity extends ParentEntity{
+export class MenuItem extends Parent{
 
     @Column()
     code: string;
@@ -13,24 +13,22 @@ export class MenuItemEntity extends ParentEntity{
     @Column()
     price: number;
 
-    @OneToOne(type => TaxEntity)
+    @OneToOne(type => Tax)
     @JoinColumn()
-    tax: TaxEntity
+    tax: Tax
 
-    @OneToOne(type => ProductEntity)
+    @OneToOne(type => Product)
     @JoinColumn()
-    product: ProductEntity;
+    product: Product;
 
-    @OneToMany(type => OrderEntity, order => order.items)
-    order?: OrderEntity;
+    @OneToMany(type => Order, order => order.items)
+    order?: Order;
 
-    constructor(code: string, price:number, tax: TaxEntity, product: ProductEntity) {
+    constructor(code: string, price:number, tax: Tax, product: Product) {
         super();
         this.code = code;
         this.price = price;
         this.tax = tax;
         this.product = product;
     }
-
-
 }

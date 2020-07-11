@@ -1,27 +1,32 @@
 import { Column, Entity } from 'typeorm';
-import { ParentEntity } from './parent.entity';
+import { Parent } from './parent.entity';
+import { Field, ObjectType } from 'type-graphql';
 
-@Entity("users")
-export class UserEntity extends ParentEntity {
+@ObjectType()
+@Entity('users')
+export class User extends Parent {
 
+    @Field()
     @Column({ unique: true, nullable: false })
     username: string;
 
     @Column({ nullable: false })
     password: string;
 
+    @Field()
     @Column({ nullable: false, unique: true })
     email: string;
 
+    @Field()
     @Column({ nullable: false, name: 'first_name' })
     firstName: string;
 
+    @Field()
     @Column({ nullable: false, name: 'last_name' })
     lastName: string;
 
-    @Column({ name: 'token' })
+    @Column()
     token: string;
-
 
     constructor(
         username: string, password: string, firstName: string,
@@ -36,5 +41,3 @@ export class UserEntity extends ParentEntity {
         this.token = '';
     }
 }
-
-export default UserEntity;

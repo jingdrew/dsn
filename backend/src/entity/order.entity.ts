@@ -1,10 +1,10 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
-import { ParentEntity } from './parent.entity';
-import { MenuItemEntity } from './menuItem.entity';
-import { ClientEntity } from './client.entity';
+import { Parent } from './parent.entity';
+import { MenuItem } from './menuItem.entity';
+import { Client } from './client.entity';
 
 @Entity("orders")
-export class OrderEntity extends ParentEntity {
+export class Order extends Parent {
 
     @Column()
     ordNumber: number;
@@ -12,20 +12,19 @@ export class OrderEntity extends ParentEntity {
     @Column()
     notes: string;
 
-    @ManyToOne(type => MenuItemEntity, menu => menu.order)
+    @ManyToOne(type => MenuItem, menu => menu.order)
     @JoinColumn({ name: 'itemId' })
-    items: MenuItemEntity[];
+    items: MenuItem[];
 
-    @OneToOne(type => ClientEntity)
+    @OneToOne(type => Client)
     @JoinColumn()
-    client: ClientEntity;
+    client: Client;
 
-    constructor(ordNumber: number, notes: string, items: MenuItemEntity[], client: ClientEntity) {
+    constructor(ordNumber: number, notes: string, items: MenuItem[], client: Client) {
         super();
         this.ordNumber = ordNumber;
         this.notes = notes;
         this.items = items;
         this.client = client;
     }
-
 }

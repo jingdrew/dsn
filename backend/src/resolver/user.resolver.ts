@@ -1,35 +1,49 @@
-import UserService from '../service/user.service';
 import { Arg, Mutation, Query } from 'type-graphql';
-import { AuthInput, Token, User, UserInput } from '../typedef/user.typedef';
+import { AuthInput, Token, UserInput } from '../typedef/user.typedef';
 import { validateOrReject } from 'class-validator';
 import { ApolloError } from 'apollo-server-express';
+import { User } from '../entity/user.entity';
+import { compare, hash } from 'bcryptjs';
+import { generateAccessToken, validateToken } from '../helper/jwt.helper';
 
 class UserResolver {
 
-    @Query(() => User)
-    async user() {
-        return ( { username: 'Jing', password: 'Du' } );
-    };
-
     @Mutation(() => User)
     async signUp(@Arg('input') input: UserInput) {
-        await validateOrReject(input);
-        const result = await UserService.register(input);
-        if (result.getError()) {
-            throw new ApolloError(result.getError()!.message, result.code);
-        } else {
-            return result.getData();
+        try {
+            await validateOrReject(input);
+            const hashedPassword = await hash(input.password!, 12);
+            const user = new User(input.username!, hashedPassword, input.firstName!, input.lastName!, input.email!);
+            if (await user.save())
+                return user;
+            return new ApolloError('Unknown error occurred', '500');
+        } catch (e) {
+            return new ApolloError(e.detail ?? 'Unknown error occurred.', e.code ?? '500');
         }
     };
 
     @Mutation(() => Token)
     async authenticate(@Arg('input') input: AuthInput) {
-        await validateOrReject(input);
-        const result = await UserService.authenticate(input.username!, input.password!);
-        if (result.getError()) {
-            throw new ApolloError(result.getError()!.message, result.code);
-        } else {
-            return { token: result.getData() };
+        try {
+            await validateOrReject(input);
+            const user = await User.findOne({ username: input.username });
+            if (user) {
+                if (await compare(input.password!, user.password)) {
+                    if (validateToken(user.token)) {
+                        return { token: user.token };
+                    }
+                    const result = await generateAccessToken(user);
+                    if (result.getError()) {
+                        return new ApolloError(result.getError()!.message, result.code);
+                    } else {
+                        return { token: result.data };
+                    }
+                }
+                return new ApolloError('Bad credentials, wrong username or password.', '400');
+            }
+            return new ApolloError('Bad credentials, user not found.', '400');
+        } catch (e) {
+            return new ApolloError(e.detail ?? 'Unknown error occurred.', e.code ?? '500');
         }
     };
 }

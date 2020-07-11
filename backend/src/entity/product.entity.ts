@@ -1,12 +1,16 @@
-import { ParentEntity } from './parent.entity';
-import { Column, Entity } from 'typeorm';
+import { Parent } from './parent.entity';
+import { Column, Entity, } from 'typeorm';
+import { Field, ObjectType } from 'type-graphql';
 
-@Entity("products")
-export class ProductEntity extends ParentEntity{
+@ObjectType()
+@Entity('products')
+export class Product extends Parent {
 
+    @Field()
     @Column()
     name: string;
 
+    @Field()
     @Column()
     description: string;
 

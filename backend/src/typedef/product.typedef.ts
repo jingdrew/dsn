@@ -1,12 +1,24 @@
-import { Field, ObjectType } from 'type-graphql';
+import { Field, InputType } from 'type-graphql';
 
-
-@ObjectType()
-export class Product {
+@InputType()
+export class ProductInput {
 
     @Field()
+    name!: string;
+
+    @Field()
+    description!: string;
+}
+
+@InputType()
+export class ProductFilter {
+
+    @Field({ nullable: true })
+    id?: string;
+
+    @Field({ nullable: true })
     name?: string;
 
-    @Field()
+    @Field({ nullable: true })
     description?: string;
 }
