@@ -12,10 +12,12 @@ createConnection().then(async () => {
 
     const app = express();
     const serverPort = process.env.SERVER_PORT ?? 4000;
-    const apiPath = process.env.GRAPHQL_PATH ?? "/graphql";
-
+    const apiPath = process.env.GRAPHQL_PATH ?? '/graphql';
+    
     const apolloServer = new ApolloServer({
-        schema: await buildSchema({ resolvers: [UserResolver, ProductResolver] }),
+        schema: await buildSchema({
+            resolvers: [UserResolver, ProductResolver]
+        }),
         context: ({ req, res }) => ( { req, res } )
     });
 

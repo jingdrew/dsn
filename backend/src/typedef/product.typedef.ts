@@ -1,4 +1,5 @@
 import { Field, InputType } from 'type-graphql';
+import { SortOrder } from './enum.typedef';
 
 @InputType()
 export class ProductInput {
@@ -12,13 +13,19 @@ export class ProductInput {
 
 @InputType()
 export class ProductFilter {
+    @Field({ nullable: true })
+    id?: number;
 
     @Field({ nullable: true })
-    id?: string;
+    nameLike?: string;
 
-    @Field({ nullable: true })
-    name?: string;
+    @Field()
+    limit: number = 10;
 
-    @Field({ nullable: true })
-    description?: string;
+    @Field()
+    skip: number = 0;
+
+    @Field()
+    order: SortOrder = SortOrder.ASC;
+
 }
