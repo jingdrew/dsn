@@ -1,4 +1,4 @@
-import { Arg, Mutation, Query } from 'type-graphql';
+import { Arg, Mutation, Query, Resolver } from 'type-graphql';
 import { AuthInput, Token, UserInput } from '../typedef/user.typedef';
 import { validateOrReject } from 'class-validator';
 import { ApolloError } from 'apollo-server-express';
@@ -6,7 +6,8 @@ import { User } from '../entity/user.entity';
 import { compare, hash } from 'bcryptjs';
 import { generateAccessToken, validateToken } from '../helper/jwt.helper';
 
-class UserResolver {
+@Resolver()
+export class UserResolver {
 
     @Mutation(() => User)
     async signUp(@Arg('input') input: UserInput) {
@@ -47,5 +48,3 @@ class UserResolver {
         }
     };
 }
-
-export default UserResolver;

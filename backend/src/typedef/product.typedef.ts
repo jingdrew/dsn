@@ -27,5 +27,4 @@ export class ProductFilter {
 
     @Field()
     order: SortOrder = SortOrder.ASC;
-
 }

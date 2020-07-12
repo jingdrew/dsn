@@ -4,10 +4,9 @@ import { IsAuthorized } from '../middleware/authorize.middleware';
 import { ProductFilter, ProductInput } from '../typedef/product.typedef';
 import { validateOrReject } from 'class-validator';
 import { ApolloError } from 'apollo-server-express';
-import { Like } from 'typeorm';
 
 @Resolver()
-class ProductResolver {
+export class ProductResolver {
 
     @Query(() => [Product])
     @UseMiddleware(IsAuthorized)
@@ -59,5 +58,3 @@ class ProductResolver {
         }
     }
 }
-
-export default ProductResolver;

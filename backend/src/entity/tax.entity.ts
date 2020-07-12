@@ -3,7 +3,7 @@ import { Column, Entity } from 'typeorm';
 import { Field, ObjectType } from 'type-graphql';
 
 @ObjectType()
-@Entity("taxes")
+@Entity('taxes')
 export class Tax extends Parent {
 
     @Field()
@@ -15,7 +15,7 @@ export class Tax extends Parent {
     description: string;
 
     @Field()
-    @Column({ nullable: false })
+    @Column({ nullable: false, type: 'decimal', default: 0.0 })
     value: number;
 
     constructor(name: string, description: string, tax: number) {

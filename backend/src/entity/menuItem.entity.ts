@@ -3,13 +3,17 @@ import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { Product } from './product.entity';
 import { Tax } from './tax.entity';
 import { Order } from './order.entity';
+import { Field, ObjectType } from 'type-graphql';
 
+@ObjectType()
 @Entity("items")
 export class MenuItem extends Parent{
 
+    @Field()
     @Column()
     code: string;
 
+    @Field()
     @Column()
     price: number;
 

@@ -2,13 +2,17 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
 import { Parent } from './parent.entity';
 import { MenuItem } from './menuItem.entity';
 import { Client } from './client.entity';
+import { Field, ObjectType } from 'type-graphql';
 
+@ObjectType()
 @Entity("orders")
 export class Order extends Parent {
 
+    @Field()
     @Column()
     ordNumber: number;
 
+    @Field()
     @Column()
     notes: string;
 

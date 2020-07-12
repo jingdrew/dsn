@@ -1,21 +1,44 @@
 import { Arg, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
-import { Product } from '../entity/product.entity';
 import { IsAuthorized } from '../middleware/authorize.middleware';
 import { ApolloError } from 'apollo-server-express';
-import { ProductInput } from '../typedef/product.typedef';
 import { validateOrReject } from 'class-validator';
 import { Tax } from '../entity/tax.entity';
-import { TaxInput } from '../typedef/tax.typedef';
+import { TaxFilter, TaxInput } from '../typedef/tax.typedef';
 
 @Resolver()
-class TaxResolver {
+export class TaxResolver {
 
     @Query(() => [Tax])
     @UseMiddleware(IsAuthorized)
-    async taxes() {
+    async taxes(@Arg("filter", {nullable: true}) filter: TaxFilter) {
         try {
-            return await Product.find();
+            if (filter) {
+                if (filter.id) {
+                    return await Tax.find({ where: { id: filter.id } });
+                } else {
+                    if (filter.nameLike) {
+                        return await Tax.find({
+                            where: `"Tax"."name" ILIKE '%${filter.nameLike}%'`,
+                            take: filter.limit,
+                            skip: filter.skip,
+                            order: {
+                                id: filter.order
+                            }
+                        });
+                    }
+                }
+            } else {
+                filter = new TaxFilter();
+            }
+            return await Tax.find({
+                take: filter.limit,
+                skip: filter.skip,
+                order: {
+                    id: filter.order
+                }
+            });
         } catch (e) {
+            console.log(e);
             return new ApolloError(e.details ?? 'Unexpected error occurred.', e.code ?? '500');
         }
     }
