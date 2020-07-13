@@ -6,7 +6,7 @@ import { MenuItem } from '../entity/menuItem.entity';
 import { ItemFilter, ItemInput } from '../typedef/item.typedef';
 import { Tax } from '../entity/tax.entity';
 import { Product } from '../entity/product.entity';
-import { Client } from '../entity/client.entity';
+import { parseCode } from '../helper/code.helper';
 
 @Resolver()
 export class MenuItemResolver {
@@ -16,21 +16,21 @@ export class MenuItemResolver {
         try {
             if (filter) {
                 if (filter.code) {
-                    return await Client.find({ where: { code: filter.code } });
-                } else {
-                    filter = new ItemFilter();
+                    return await MenuItem.find({ where: { code: filter.code } });
                 }
-                return await Client.find({
-                    take: filter.limit,
-                    skip: filter.skip,
-                    order: {
-                        id: filter.order
-                    }
-                });
+            } else {
+                filter = new ItemFilter();
             }
+            return await MenuItem.find({
+                take: filter.limit,
+                skip: filter.skip,
+                order: {
+                    id: filter.order
+                }
+            });
         } catch (e) {
             console.log(e);
-            return new ApolloError(e.detail ?? 'Unexpected error occurred.', e.code ?? '500');
+            return new ApolloError(e.detail ?? 'Unexpected error occurred.', e.code ?? parseCode(500));
         }
     }
 
@@ -40,20 +40,20 @@ export class MenuItemResolver {
         try {
             await validateOrReject(input);
             const tax = await Tax.findOne(input.taxId);
-            if (!tax) return new ApolloError('Tax is invalid.', '400');
+            if (!tax) return new ApolloError('Tax is invalid.', parseCode(400));
             const product = await Product.findOne(input.productId);
-            if (!product) return new ApolloError('Product is invalid.', '400');
+            if (!product) return new ApolloError('Product is invalid.', parseCode(400));
 
             const item = new MenuItem(input.code, input.price, tax, product);
             if (await item.save()) {
                 return item;
             }
-            return new ApolloError('Unexpected error occurred.', '500');
+            return new ApolloError('Unexpected error occurred.', parseCode(500));
         } catch (e) {
             console.log(e);
             return new ApolloError(
                 e.detail ?? 'Unexpected error occurred.',
-                e.code ?? '500'
+                e.code ?? parseCode(500)
             );
         }
     }

@@ -4,6 +4,7 @@ import { ApolloError } from 'apollo-server-express';
 import { validateOrReject } from 'class-validator';
 import { ClientFilter, ClientInput } from '../typedef/client.typedef';
 import { Client } from '../entity/client.entity';
+import { parseCode } from '../helper/code.helper';
 
 @Resolver()
 export class ClientResolver {
@@ -47,8 +48,7 @@ export class ClientResolver {
                 }
             });
         } catch (e) {
-            console.log(e);
-            return new ApolloError(e.detail ?? 'Unexpected error occurred.', e.code ?? '500');
+            return new ApolloError(e.detail ?? 'Unexpected error occurred.', e.code ?? parseCode(500));
         }
     }
 
@@ -62,10 +62,9 @@ export class ClientResolver {
             if (await client.save()) {
                 return client;
             }
-            return new ApolloError('Unexpected error occurred.', '500');
+            return new ApolloError('Unexpected error occurred.', parseCode(500));
         } catch (e) {
-            console.log(e);
-            return new ApolloError(e.detail ?? 'Unexpected error occurred.', e.code ?? '500');
+            return new ApolloError(e.detail ?? 'Unexpected error occurred.', e.code ?? parseCode(500));
         }
     }
 }

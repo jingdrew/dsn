@@ -1,6 +1,7 @@
 import { Parent } from './parent.entity';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { Field, ObjectType } from 'type-graphql';
+import { MenuItem } from './menuItem.entity';
 
 @ObjectType()
 @Entity('taxes')

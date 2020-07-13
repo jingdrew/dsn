@@ -4,6 +4,7 @@ import { ApolloError } from 'apollo-server-express';
 import { validateOrReject } from 'class-validator';
 import { Tax } from '../entity/tax.entity';
 import { TaxFilter, TaxInput } from '../typedef/tax.typedef';
+import { parseCode } from '../helper/code.helper';
 
 @Resolver()
 export class TaxResolver {
@@ -39,7 +40,7 @@ export class TaxResolver {
             });
         } catch (e) {
             console.log(e);
-            return new ApolloError(e.detail ?? 'Unexpected error occurred.', e.code ?? '500');
+            return new ApolloError(e.detail ?? 'Unexpected error occurred.', e.code ?? parseCode(500));
         }
     }
 
@@ -52,9 +53,9 @@ export class TaxResolver {
             if (await tax.save()) {
                 return tax;
             }
-            return new ApolloError('Unexpected error occurred.', '500');
+            return new ApolloError('Unexpected error occurred.', parseCode(500));
         } catch (e) {
-            return new ApolloError(e.detail ?? 'Unexpected error occurred.', e.code ?? '500');
+            return new ApolloError(e.detail ?? 'Unexpected error occurred.', e.code ?? parseCode(500));
         }
     }
 }

@@ -5,6 +5,7 @@ import { ApolloError } from 'apollo-server-express';
 import { User } from '../entity/user.entity';
 import { compare, hash } from 'bcryptjs';
 import { generateAccessToken, validateToken } from '../helper/jwt.helper';
+import { parseCode } from '../helper/code.helper';
 
 @Resolver()
 export class UserResolver {
@@ -17,9 +18,9 @@ export class UserResolver {
             const user = new User(input.username!, hashedPassword, input.firstName!, input.lastName!, input.email!);
             if (await user.save())
                 return user;
-            return new ApolloError('Unknown error occurred', '500');
+            return new ApolloError('Unknown error occurred', parseCode(500));
         } catch (e) {
-            return new ApolloError(e.detail ?? 'Unknown error occurred.', e.code ?? '500');
+            return new ApolloError(e.detail ?? 'Unknown error occurred.', e.code ?? parseCode(500));
         }
     };
 
@@ -40,11 +41,11 @@ export class UserResolver {
                         return { token: result.data };
                     }
                 }
-                return new ApolloError('Bad credentials, wrong username or password.', '400');
+                return new ApolloError('Bad credentials, wrong username or password.', parseCode(400));
             }
-            return new ApolloError('Bad credentials, user not found.', '400');
+            return new ApolloError('Bad credentials, user not found.', parseCode(400));
         } catch (e) {
-            return new ApolloError(e.detail ?? 'Unknown error occurred.', e.code ?? '500');
+            return new ApolloError(e.detail ?? 'Unknown error occurred.', e.code ?? parseCode(500));
         }
     };
 }

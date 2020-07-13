@@ -6,7 +6,7 @@ import { Order } from './order.entity';
 import { Field, ObjectType } from 'type-graphql';
 
 @ObjectType()
-@Entity('items')
+@Entity('menu_items')
 export class MenuItem extends Parent {
 
     @Field()
@@ -17,16 +17,15 @@ export class MenuItem extends Parent {
     @Column({ type: 'float', default: 0.0 })
     price: number;
 
-    @Field(() => Tax)
-    @ManyToOne(type => Tax)
+    @Field(() => Tax, )
+    @ManyToOne(type => Tax, {eager: true})
+    @JoinColumn({name: 'tax_id'})
     tax: Tax;
 
-    @Field(() => Product)
-    @ManyToOne(type => Product)
+    @Field(() => Product, )
+    @ManyToOne(type => Product, {eager: true})
+    @JoinColumn({name: 'product_id'})
     product: Product;
-
-    @OneToMany(type => Order, order => order.items)
-    order?: Order;
 
     constructor(code: string, price: number, tax: Tax, product: Product) {
         super();

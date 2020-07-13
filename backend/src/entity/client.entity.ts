@@ -3,7 +3,7 @@ import { Parent } from './parent.entity';
 import { Field, ObjectType } from 'type-graphql';
 
 @ObjectType()
-@Entity("clients")
+@Entity('clients')
 export class Client extends Parent {
 
     @Field()
@@ -14,12 +14,12 @@ export class Client extends Parent {
     @Column()
     address: string;
 
-    @Field({nullable: true})
-    @Column({nullable: true})
+    @Field({ nullable: true })
+    @Column({ nullable: true })
     email: string;
 
     @Field()
-    @Column({ unique: true, nullable: false })
+    @Column({ name: 'phone_number', unique: true, nullable: false })
     @Index()
     phoneNumber: string;
 

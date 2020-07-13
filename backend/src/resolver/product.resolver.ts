@@ -4,6 +4,7 @@ import { IsAuthorized } from '../middleware/authorize.middleware';
 import { ProductFilter, ProductInput } from '../typedef/product.typedef';
 import { validateOrReject } from 'class-validator';
 import { ApolloError } from 'apollo-server-express';
+import { parseCode } from '../helper/code.helper';
 
 @Resolver()
 export class ProductResolver {
@@ -39,7 +40,7 @@ export class ProductResolver {
             });
         } catch (e) {
             console.log(e);
-            return new ApolloError(e.detail ?? 'Unexpected error occurred.', e.code ?? '500');
+            return new ApolloError(e.detail ?? 'Unexpected error occurred.', e.code ?? parseCode(500));
         }
     }
 
@@ -52,9 +53,9 @@ export class ProductResolver {
             if (await product.save()) {
                 return product;
             }
-            return new ApolloError('Unexpected error occurred.', '500');
+            return new ApolloError('Unexpected error occurred.', parseCode(500));
         } catch (e) {
-            return new ApolloError(e.detail ?? 'Unexpected error occurred.', e.code ?? '500');
+            return new ApolloError(e.detail ?? 'Unexpected error occurred.', e.code ?? parseCode(500));
         }
     }
 }
