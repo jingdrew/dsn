@@ -10,16 +10,18 @@ import { Field, ObjectType } from 'type-graphql';
 export class MenuItem extends Parent {
 
     @Field()
-    @Column({unique: true})
+    @Column({ unique: true })
     code: string;
 
     @Field()
     @Column({ type: 'float', default: 0.0 })
     price: number;
 
+    @Field(() => Tax)
     @ManyToOne(type => Tax)
     tax: Tax;
 
+    @Field(() => Product)
     @ManyToOne(type => Product)
     product: Product;
 

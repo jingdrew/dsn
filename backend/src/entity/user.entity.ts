@@ -25,7 +25,7 @@ export class User extends Parent {
     @Column({ nullable: false, name: 'last_name' })
     lastName: string;
 
-    @Column()
+    @Column({ nullable: true })
     token: string;
 
     constructor(
