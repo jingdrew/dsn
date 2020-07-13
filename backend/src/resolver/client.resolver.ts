@@ -17,15 +17,15 @@ export class ClientResolver {
                     return await Client.find({ where: { id: filter.id } });
                 } else if (filter.email) {
                     return await Client.find({ where: { email: filter.email } });
-                } else if (filter.phoneNumber){
+                } else if (filter.phoneNumber) {
                     return await Client.find({ where: { phoneNumber: filter.phoneNumber } });
                 } else {
-                    let whereClause = [];
+                    let whereClause = "";
                     if (filter.nameLike) {
-                        whereClause.push(`"Client"."fullName" ILIKE '%${filter.nameLike}%'`)
+                        whereClause = `"Client"."fullName" ILIKE '%${filter.nameLike}%'`;
                     }
                     if (filter.addressLike) {
-                        whereClause.push(`"Client"."address" ILIKE '%${filter.addressLike}%'`)
+                        whereClause = `"Client"."address" ILIKE '%${filter.addressLike}%'`;
                     }
                     return await Client.find({
                         where: whereClause,
@@ -47,7 +47,8 @@ export class ClientResolver {
                 }
             });
         } catch (e) {
-            return new ApolloError(e.details ?? 'Unexpected error occurred.', e.code ?? '500');
+            console.log(e);
+            return new ApolloError(e.detail ?? 'Unexpected error occurred.', e.code ?? '500');
         }
     }
 
@@ -55,14 +56,16 @@ export class ClientResolver {
     @UseMiddleware(IsAuthorized)
     async saveClient(@Arg('input') input: ClientInput) {
         try {
+            console.log(input);
             await validateOrReject(input);
-                const client = new Client(input.fullName, input.address, input.email, input.phoneNumber);
+            const client = new Client(input.fullName, input.address, input.email, input.phoneNumber);
             if (await client.save()) {
                 return client;
             }
             return new ApolloError('Unexpected error occurred.', '500');
         } catch (e) {
-            return new ApolloError(e.details ?? 'Unexpected error occurred.', e.code ?? '500');
+            console.log(e);
+            return new ApolloError(e.detail ?? 'Unexpected error occurred.', e.code ?? '500');
         }
     }
 }

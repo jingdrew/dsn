@@ -39,7 +39,7 @@ export class ProductResolver {
             });
         } catch (e) {
             console.log(e);
-            return new ApolloError(e.details ?? 'Unexpected error occurred.', e.code ?? '500');
+            return new ApolloError(e.detail ?? 'Unexpected error occurred.', e.code ?? '500');
         }
     }
 
@@ -54,7 +54,7 @@ export class ProductResolver {
             }
             return new ApolloError('Unexpected error occurred.', '500');
         } catch (e) {
-            return new ApolloError(e.details ?? 'Unexpected error occurred.', e.code ?? '500');
+            return new ApolloError(e.detail ?? 'Unexpected error occurred.', e.code ?? '500');
         }
     }
 }

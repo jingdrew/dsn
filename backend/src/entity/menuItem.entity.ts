@@ -1,34 +1,32 @@
 import { Parent } from './parent.entity';
-import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 import { Product } from './product.entity';
 import { Tax } from './tax.entity';
 import { Order } from './order.entity';
 import { Field, ObjectType } from 'type-graphql';
 
 @ObjectType()
-@Entity("items")
-export class MenuItem extends Parent{
+@Entity('items')
+export class MenuItem extends Parent {
 
     @Field()
-    @Column()
+    @Column({unique: true})
     code: string;
 
     @Field()
-    @Column()
+    @Column({ type: 'float', default: 0.0 })
     price: number;
 
-    @OneToOne(type => Tax)
-    @JoinColumn()
-    tax: Tax
+    @ManyToOne(type => Tax)
+    tax: Tax;
 
-    @OneToOne(type => Product)
-    @JoinColumn()
+    @ManyToOne(type => Product)
     product: Product;
 
     @OneToMany(type => Order, order => order.items)
     order?: Order;
 
-    constructor(code: string, price:number, tax: Tax, product: Product) {
+    constructor(code: string, price: number, tax: Tax, product: Product) {
         super();
         this.code = code;
         this.price = price;

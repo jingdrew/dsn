@@ -15,7 +15,7 @@ export class Tax extends Parent {
     description: string;
 
     @Field()
-    @Column({ nullable: false, type: 'decimal', default: 0.0 })
+    @Column({ nullable: false, type: 'float', default: 0.0 })
     value: number;
 
     constructor(name: string, description: string, tax: number) {

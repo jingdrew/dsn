@@ -1,6 +1,6 @@
 import { Field, InputType } from 'type-graphql';
 import { SortOrder } from './enum.typedef';
-import { IsEmail } from 'class-validator';
+import { IsEmail, IsOptional } from 'class-validator';
 
 @InputType()
 export class ClientInput {
@@ -13,6 +13,7 @@ export class ClientInput {
 
     @Field({ nullable: true })
     @IsEmail()
+    @IsOptional()
     email!: string;
 
     @Field()

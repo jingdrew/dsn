@@ -14,8 +14,8 @@ export class Client extends Parent {
     @Column()
     address: string;
 
-    @Field()
-    @Column()
+    @Field({nullable: true})
+    @Column({nullable: true})
     email: string;
 
     @Field()
